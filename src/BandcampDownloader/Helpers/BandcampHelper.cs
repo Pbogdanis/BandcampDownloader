@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -56,16 +57,9 @@ namespace BandcampDownloader {
         /// </summary>
         /// <param name="htmlCode">The HTML source code of a Bandcamp page.</param>
         /// <returns>The albums URL existing on the specified Bandcamp page.</returns>
-        public static List<string> GetAlbumsUrl(string htmlCode) {
-            // Get artist bandcamp page
-            var regex = new Regex("band_url = \"(?<url>.*)\"");
-            if (!regex.IsMatch(htmlCode)) {
-                throw new NoAlbumFoundException();
-            }
-            string artistPage = regex.Match(htmlCode).Groups["url"].Value;
-
+        public static List<string> GetAlbumsUrl(string htmlCode, string artistPage) {
             // Get albums ("real" albums or track-only pages) relative urls
-            regex = new Regex("href=\"(?<url>/(album|track)/.*)\"");
+            var regex = new Regex("href=\"(?<url>/(album|track)/.*)\"");
             if (!regex.IsMatch(htmlCode)) {
                 throw new NoAlbumFoundException();
             }
@@ -84,7 +78,7 @@ namespace BandcampDownloader {
             // Some JSON is not correctly formatted in bandcamp pages, so it needs to be fixed before we can deserialize it
 
             // In trackinfo property, we have for instance:
-            //     url: "http://verbalclick.bandcamp.com" + "/album/404"
+            // url: "http://verbalclick.bandcamp.com" + "/album/404"
             // -> Remove the " + "
             var regex = new Regex("(?<root>url: \".+)\" \\+ \"(?<album>.+\",)");
             string fixedData = regex.Replace(albumData, "${root}${album}");
@@ -93,16 +87,18 @@ namespace BandcampDownloader {
         }
 
         private static string GetAlbumData(string htmlCode) {
-            string startString = "var TralbumData = {";
-            string stopString = "};";
+            string startString = "data-tralbum=\"{";
+            string stopString = "}\"";
 
             if (htmlCode.IndexOf(startString) == -1) {
                 // Could not find startString
-                throw new Exception("Could not find the following string in HTML code: var TralbumData = {");
+                throw new Exception($"Could not find the following string in HTML code: {startString}");
             }
 
             string albumDataTemp = htmlCode.Substring(htmlCode.IndexOf(startString) + startString.Length - 1);
             string albumData = albumDataTemp.Substring(0, albumDataTemp.IndexOf(stopString) + 1);
+
+            albumData = WebUtility.HtmlDecode(albumData);
 
             return albumData;
         }

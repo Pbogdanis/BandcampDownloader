@@ -1,3 +1,30 @@
+# 1.3.5
+
+## Bug fixes
+
+* Fixed HTML characters not decoded in metadata. [#157](https://github.com/Otiel/BandcampDownloader/issues/157)
+
+## Improvements
+
+* Updated the following languages thanks to [contributors](https://github.com/Otiel/BandcampDownloader/pull/160): Italian.
+
+# 1.3.4
+
+## Bug fixes
+
+* Fixed discography download. Thanks **@Nebula-Mechanica**! [#150](https://github.com/Otiel/BandcampDownloader/issues/150) [#152](https://github.com/Otiel/BandcampDownloader/pull/152)
+
+## Improvements
+
+* Added the following languages thanks to [contributors](https://github.com/Otiel/BandcampDownloader/pull/160): Ukrainian.
+* Updated the following languages thanks to [contributors](https://github.com/Otiel/BandcampDownloader/pull/160): Portuguese.
+
+# 1.3.3
+
+## Bug fixes
+
+* Fixed the reading of Bandcamp metadata since their changes. [#153](https://github.com/Otiel/BandcampDownloader/issues/153)
+
 # 1.3.2
 
 ## Improvements
